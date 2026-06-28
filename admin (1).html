@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin — Polla 2026</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#07090F;color:#F1F5F9;min-height:100vh;padding-bottom:3rem}
+.nav{background:#0D1220;border-bottom:1px solid rgba(255,255,255,.07);padding:.85rem 1.25rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.nav-title{font-size:15px;font-weight:700;color:#F5BC00}
+.nav-sub{font-size:10px;color:#475569;margin-top:1px}
+.wrap{max-width:560px;margin:0 auto;padding:1.25rem}
+.login-card{background:#0D1220;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:2rem;text-align:center;max-width:300px;margin:3rem auto}
+.login-title{font-size:17px;font-weight:700;margin-bottom:1.5rem;color:#F5BC00}
+.inp{width:100%;height:42px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:0 13px;font-size:14px;color:#F1F5F9;outline:none;margin-bottom:.85rem;font-family:inherit}
+.inp:focus{border-color:#F5BC00}
+.btn{width:100%;height:42px;background:linear-gradient(135deg,#F5BC00,#E85D04);border:none;border-radius:10px;color:#07090F;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:.15s}
+.btn:hover{opacity:.9}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-out{background:rgba(255,255,255,.06);color:#F1F5F9;border:1px solid rgba(255,255,255,.1);width:auto;padding:0 14px;height:34px;font-size:12px}
+.card{background:#0D1220;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:1.15rem;margin-bottom:.85rem}
+.card-title{font-size:11px;font-weight:700;color:#F5BC00;letter-spacing:.1em;text-transform:uppercase;margin-bottom:1rem;display:flex;align-items:center;gap:7px}
+.card-title::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.06)}
+.ronda-sel{width:100%;height:40px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:0 12px;font-size:14px;color:#F1F5F9;outline:none;font-family:inherit}
+
+/* Tabla puntajes */
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{font-size:10px;font-weight:700;color:#64748B;letter-spacing:.06em;text-transform:uppercase;padding:5px 6px;text-align:center;white-space:nowrap;border-bottom:1px solid rgba(255,255,255,.06)}
+.tbl th:first-child{text-align:left}
+.tbl td{padding:5px 4px;border-bottom:1px solid rgba(255,255,255,.04)}
+.tbl tr:last-child td{border-bottom:none}
+.pname{font-size:12px;font-weight:600;white-space:nowrap;max-width:90px;overflow:hidden;text-overflow:ellipsis;display:block}
+.si{width:44px;height:32px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:0 5px;font-size:13px;font-weight:700;color:#F1F5F9;text-align:center;outline:none;font-family:inherit}
+.si:focus{border-color:#F5BC00}
+.total-v{font-size:15px;font-weight:800;color:#F5BC00;min-width:30px;text-align:center;display:block}
+
+/* Tabla extras */
+.ext-tbl{width:100%;border-collapse:collapse;font-size:12px}
+.ext-tbl th{font-size:10px;font-weight:700;color:#64748B;letter-spacing:.06em;text-transform:uppercase;padding:5px 6px;text-align:left;border-bottom:1px solid rgba(255,255,255,.06);white-space:nowrap}
+.ext-tbl td{padding:6px 4px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
+.ext-tbl tr:last-child td{border-bottom:none}
+.ei{height:32px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:0 8px;font-size:12px;color:#F1F5F9;outline:none;font-family:inherit;width:100%}
+.ei:focus{border-color:#F5BC00}
+
+.status{padding:9px 13px;border-radius:10px;font-size:12px;font-weight:600;text-align:center;margin-bottom:.85rem}
+.s-ok{background:rgba(34,197,94,.1);color:#4ade80;border:1px solid rgba(34,197,94,.15)}
+.s-err{background:rgba(239,68,68,.1);color:#f87171;border:1px solid rgba(239,68,68,.15)}
+.s-inf{background:rgba(245,188,0,.08);color:#F5BC00;border:1px solid rgba(245,188,0,.15)}
+
+.av{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;vertical-align:middle;margin-right:6px}
+
+#loginPage,#adminPage{display:none}
+#loginPage.show,#adminPage.show{display:block}
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <div>
+    <div class="nav-title">⚙️ Admin — Polla 2026</div>
+    <div class="nav-sub">Solo para Martin</div>
+  </div>
+  <button class="btn btn-out" onclick="logout()" id="logoutBtn" style="display:none">Salir</button>
+</div>
+
+<div class="wrap">
+
+  <!-- LOGIN -->
+  <div id="loginPage" class="show">
+    <div class="login-card">
+      <div class="login-title">🔐 Acceso Admin</div>
+      <input class="inp" type="password" id="pwdInp" placeholder="Contraseña" onkeydown="if(event.key==='Enter')doLogin()">
+      <button class="btn" onclick="doLogin()">Entrar</button>
+      <div id="loginErr" style="color:#f87171;font-size:12px;margin-top:.65rem"></div>
+    </div>
+  </div>
+
+  <!-- ADMIN -->
+  <div id="adminPage">
+    <div id="statusMsg"></div>
+
+    <!-- Ronda actual -->
+    <div class="card">
+      <div class="card-title">Ronda actual</div>
+      <select class="ronda-sel" id="rondaSelect">
+        <option>16avos</option><option>Octavos</option><option>Cuartos</option>
+        <option>Semis</option><option>3er lugar</option><option>Final</option>
+      </select>
+    </div>
+
+    <!-- Puntajes -->
+    <div class="card">
+      <div class="card-title">Puntajes por jugador</div>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>Jugador</th>
+              <th>16avos</th><th>Octavos</th><th>Cuartos</th><th>Semis</th>
+              <th>Extras</th><th>Marc.</th><th>TOTAL</th>
+            </tr>
+          </thead>
+          <tbody id="scoresBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Extras: Top3 y Sorpresa -->
+    <div class="card">
+      <div class="card-title">Extras — Campeón, Top3 y Sorpresa</div>
+      <div class="tbl-wrap">
+        <table class="ext-tbl">
+          <thead>
+            <tr>
+              <th>Jugador</th>
+              <th>🏆 Campeón</th>
+              <th>🥈 2do</th>
+              <th>🥉 3ro</th>
+              <th>⚡ Sorpresa</th>
+            </tr>
+          </thead>
+          <tbody id="extrasBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <button class="btn" onclick="saveData()" id="saveBtn">💾 Guardar y publicar</button>
+  </div>
+
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const FB_CFG = {
+  apiKey: "AIzaSyAve5JBF1474PhnyLFbcVs4W4r-i1tsB_c",
+  authDomain: "polla2026-712d9.firebaseapp.com",
+  projectId: "polla2026-712d9",
+  storageBucket: "polla2026-712d9.firebasestorage.app",
+  messagingSenderId: "286533100308",
+  appId: "1:286533100308:web:fe298312ea52ce32351801"
+};
+
+const ADMIN_PWD = "polla2026admin";
+
+const PLAYERS = [
+  {name:"Martin Muñoz",        col:"#E94560"},
+  {name:"Matias Palma",        col:"#F5A623"},
+  {name:"Sebastian Bustos",    col:"#3B82F6"},
+  {name:"Vicente Salah",       col:"#22C55E"},
+  {name:"Joaquin Zarate",      col:"#A855F7"},
+  {name:"Gabriel Lobos",       col:"#F97316"},
+  {name:"Gustavo Yañez",       col:"#06B6D4"},
+  {name:"Giancarlo Dall'Orso", col:"#EC4899"},
+  {name:"Sergio Barrios",      col:"#84CC16"},
+  {name:"Kevin Alvarez",       col:"#EAB308"},
+  {name:"Joaquin Paoa",        col:"#6366F1"},
+  {name:"Nicolas Lara",        col:"#14B8A6"},
+  {name:"Francisco Castañon",  col:"#F43F5E"},
+  {name:"Ignacio Soto",        col:"#8B5CF6"},
+  {name:"Lucas Barril",        col:"#0EA5E9"},
+];
+
+const app = initializeApp(FB_CFG);
+const db  = getFirestore(app);
+
+window.doLogin = ()=>{
+  const pwd=document.getElementById('pwdInp').value;
+  if(pwd===ADMIN_PWD){
+    document.getElementById('loginPage').classList.remove('show');
+    document.getElementById('adminPage').classList.add('show');
+    document.getElementById('logoutBtn').style.display='block';
+    loadCurrentData();
+  } else {
+    document.getElementById('loginErr').textContent='Contraseña incorrecta';
+  }
+};
+
+window.logout = ()=>{
+  document.getElementById('loginPage').classList.add('show');
+  document.getElementById('adminPage').classList.remove('show');
+  document.getElementById('logoutBtn').style.display='none';
+  document.getElementById('pwdInp').value='';
+};
+
+function ini(name){return name.split(' ').map(w=>w[0]).slice(0,2).join('')}
+
+function buildScoresTable(saved){
+  document.getElementById('scoresBody').innerHTML=PLAYERS.map((p,i)=>{
+    const s=saved?.find(x=>x.name===p.name)||{};
+    const fields=['32','oct','cua','sem','ext','marc'];
+    const inputs=fields.map(f=>`<td><input class="si" type="number" min="0" max="300" value="${s['pts_'+f]||s[f==='marc'?'marc':'pts_'+f]||0}" id="p${i}_${f}" oninput="updateTotal(${i})"></td>`).join('');
+    return`<tr>
+      <td><span class="av" style="background:${p.col}">${ini(p.name)}</span><span class="pname">${p.name.split(' ')[0]}</span></td>
+      ${inputs}
+      <td><span class="total-v" id="p${i}_total">${s.total||0}</span></td>
+    </tr>`;
+  }).join('');
+  PLAYERS.forEach((_,i)=>updateTotal(i));
+}
+
+function buildExtrasTable(saved){
+  document.getElementById('extrasBody').innerHTML=PLAYERS.map((p,i)=>{
+    const s=saved?.find(x=>x.name===p.name)||{};
+    return`<tr>
+      <td><span class="av" style="background:${p.col}">${ini(p.name)}</span><span class="pname">${p.name.split(' ')[0]}</span></td>
+      <td><input class="ei" type="text" placeholder="ej: España" value="${s.camp||''}" id="e${i}_camp"></td>
+      <td><input class="ei" type="text" placeholder="ej: Argentina" value="${s.t2||''}" id="e${i}_t2"></td>
+      <td><input class="ei" type="text" placeholder="ej: Francia" value="${s.t3||''}" id="e${i}_t3"></td>
+      <td><input class="ei" type="text" placeholder="ej: Marruecos" value="${s.sorpresa||''}" id="e${i}_sorpresa"></td>
+    </tr>`;
+  }).join('');
+}
+
+window.updateTotal = (i)=>{
+  const v=f=>parseInt(document.getElementById(`p${i}_${f}`)?.value)||0;
+  document.getElementById(`p${i}_total`).textContent=v('32')+v('oct')+v('cua')+v('sem')+v('ext');
+};
+
+async function loadCurrentData(){
+  showStatus('Cargando datos...','s-inf');
+  try{
+    const snap=await getDoc(doc(db,'polla2026','datos'));
+    const data=snap.exists()?snap.data():{};
+    if(data.ronda) document.getElementById('rondaSelect').value=data.ronda;
+    buildScoresTable(data.puntajes||[]);
+    buildExtrasTable(data.puntajes||[]);
+    showStatus('','');
+  } catch(e){
+    buildScoresTable([]);
+    buildExtrasTable([]);
+    showStatus('⚠️ Sin conexión a Firebase, ingresa manualmente','s-err');
+  }
+}
+
+window.saveData = async()=>{
+  const btn=document.getElementById('saveBtn');
+  btn.disabled=true; btn.textContent='Guardando...';
+  showStatus('Guardando...','s-inf');
+
+  const puntajes=PLAYERS.map((p,i)=>{
+    const v=f=>parseInt(document.getElementById(`p${i}_${f}`)?.value)||0;
+    const str=f=>document.getElementById(`e${i}_${f}`)?.value.trim()||null;
+    const total=v('32')+v('oct')+v('cua')+v('sem')+v('ext');
+    return{
+      name:p.name, total,
+      pts_32:v('32'), pts_oct:v('oct'), pts_cua:v('cua'),
+      pts_sem:v('sem'), pts_ext:v('ext'), marc:v('marc'),
+      camp:str('camp'), t2:str('t2'), t3:str('t3'), sorpresa:str('sorpresa'),
+      prev:i+1
+    };
+  });
+
+  // Calcular prev según ranking actual
+  const sorted=[...puntajes].sort((a,b)=>b.total-a.total||b.marc-a.marc);
+  puntajes.forEach(p=>{ p.prev=sorted.findIndex(s=>s.name===p.name)+1; });
+
+  const ronda=document.getElementById('rondaSelect').value;
+  try{
+    await setDoc(doc(db,'polla2026','datos'),{puntajes,ronda,updatedAt:new Date().toISOString()});
+    showStatus('✅ Publicado correctamente — todos ven el ranking actualizado','s-ok');
+  } catch(e){
+    showStatus('❌ Error: '+e.message,'s-err');
+  }
+  btn.disabled=false; btn.textContent='💾 Guardar y publicar';
+};
+
+function showStatus(msg,cls){
+  const el=document.getElementById('statusMsg');
+  el.innerHTML=msg?`<div class="status ${cls}">${msg}</div>`:'';
+}
+</script>
+</body>
+</html>
